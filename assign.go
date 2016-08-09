@@ -2,7 +2,7 @@ package main
 import "fmt"
 import "github.com/google/go-github/github"
 import "golang.org/x/oauth2"
-// import "math"
+import "math/rand"
 
 
 func main(){
@@ -34,6 +34,7 @@ func main(){
 
     if (curRepo == nil) {return}
     possibleAssignees, _, _ := client.Issues.ListAssignees(org, *curRepo.Name, &github.ListOptions{})
+    //error checking: if len(possibleAssignees) == 0
     for _, assignee := range possibleAssignees {
         fmt.Println(*assignee.Login)
     }
@@ -50,7 +51,22 @@ func main(){
         }
     }
 
+    if len(unassignedIssues) == 0 {
+        fmt.Println("You have no unassignedIssues")
+        return
+    }
+
     for issue := range unassignedIssues {
-        fmt.Println(issue.String())
+        assignRandomly(org, *curRepo.Name, client, issue, possibleAssignees)
+    }
+}
+
+func assignRandomly(org string, repo string, client *github.Client, issue *github.Issue, possibleAssignees []*github.User) {
+    teamSize := len(possibleAssignees)
+    rand.Seed(int64(teamSize))
+    assignedDev := possibleAssignees[rand.Intn(teamSize)]
+    iss, _, _ := client.Issues.AddAssignees(org, repo, *issue.Number, []string{*assignedDev.Login})
+    if len(iss.Assignees) == 0 {
+        fmt.Println(fmt.Sprintf("Unable to assign %s to issue number %d", *assignedDev.Login, *iss.Number))
     }
 }
