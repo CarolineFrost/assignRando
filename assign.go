@@ -7,8 +7,8 @@ import "math/rand"
 
 func main(){
 
-    org := "sourcegraph-beta"
-    userRepo := "sourcegraph-desktop"
+    org := "your org"
+    userRepo := "your repo"
     ts := oauth2.StaticTokenSource(
         &oauth2.Token{ AccessToken: "your accesstoken here"},
     )
@@ -17,7 +17,7 @@ func main(){
 
     if ensureRepoExists(client, userRepo) != nil {return}
 
-    possibleAssignees, _, _ := client.Issues.ListAssignees("your org", "your repo", &github.ListOptions{})
+    possibleAssignees, _, _ := client.Issues.ListAssignees(org, userRepo, &github.ListOptions{})
     if len(possibleAssignees) == 0 {return}
     randGen := rand.New(rand.NewSource(1))
 
