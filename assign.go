@@ -10,14 +10,14 @@ func main(){
     org := "sourcegraph-beta"
     userRepo := "sourcegraph-desktop"
     ts := oauth2.StaticTokenSource(
-        &oauth2.Token{ AccessToken: "68ed6eb0012b7c189133900507ac2b5967a147c9"},
+        &oauth2.Token{ AccessToken: "your accesstoken here"},
     )
     tc := oauth2.NewClient(oauth2.NoContext, ts)
     client := github.NewClient(tc)
 
     if ensureRepoExists(client, userRepo) != nil {return}
 
-    possibleAssignees, _, _ := client.Issues.ListAssignees("sourcegraph", "sourcegraph-desktop", &github.ListOptions{})
+    possibleAssignees, _, _ := client.Issues.ListAssignees("your org", "your repo", &github.ListOptions{})
     if len(possibleAssignees) == 0 {return}
     randGen := rand.New(rand.NewSource(1))
 
